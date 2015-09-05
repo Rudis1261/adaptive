@@ -29,15 +29,11 @@ inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
 inp.setperiodsize(160)
 
 volume = 80
-volumeMap = {
-    '250': 100,
-    '200': 95,
-    '150': 90,
-    '100': 85,
-    '50': 80,
-}
+currentVolume = 80
 inputVolumes  = [250, 200, 150, 100, 50]
 outputVolumes = [100, 95, 90, 85, 80]
+volumeBuffer = []
+bufferSize = 200;
 
 while True:
     # Read data from device
@@ -45,15 +41,22 @@ while True:
     if l:
         # Return the maximum of the absolute value of all samples in a fragment.
         input = audioop.max(data, 2)
+        volumeBuffer.append(input)
+        if (len(volumeBuffer) >= bufferSize):
+            averageVolume = (sum(volumeBuffer)/len(volumeBuffer))
+            for i in range(len(inputVolumes)):
+                if averageVolume >= int(inputVolumes[i]):
+                    volume = int(outputVolumes[i])
+                    break
 
+            if volume != currentVolume:
+                currentVolume = volume
+                m = alsaaudio.Mixer('Master')
+                m.setvolume(volume)
 
-        for i in range(len(inputVolumes)):
-            if input > int(inputVolumes[i]):
-                volume = int(outputVolumes[i])
-                break
-
-        m = alsaaudio.Mixer('Master')
-        m.setvolume(volume)
-        print "IN:" + format(input, '06d') + ", OUT:" + format(volume, '03d') + "%"
+            print "IN:" + format(input, '06d') + ", AVG: " + format(averageVolume, '06d') + " OUT:" + format(volume, '03d') + "%"
+            volumeBuffer.pop(0)
+        else:
+            print "BUFFERING: filling (",len(volumeBuffer),"/",bufferSize,") buffer"
 
     time.sleep(.001)
