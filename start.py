@@ -35,6 +35,10 @@ outputVolumes = [100, 95, 90, 85, 80]
 volumeBuffer = []
 bufferSize = 200;
 
+# Set initial volume
+m = alsaaudio.Mixer('Master')
+m.setvolume(volume)
+
 while True:
     # Read data from device
     l,data = inp.read()
