@@ -32,7 +32,7 @@ volume = currentVolume = 80
 volumeBuffer = []
 bufferSize = 200;
 
-inputVolumes  = [200, 150, 100, 50, 40]
+inputVolumes  = [180, 150, 80, 50, 40]
 outputVolumes = [100,  95,  90, 85, 80]
 
 # Set initial volume
