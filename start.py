@@ -32,8 +32,8 @@ volume = currentVolume = 80
 volumeBuffer = []
 bufferSize = 200;
 
-inputVolumes  = [250, 200, 150, 100, 50]
-outputVolumes = [100,  95,  90,  85, 80]
+inputVolumes  = [200, 150, 100, 50, 40]
+outputVolumes = [100,  95,  90, 85, 80]
 
 # Set initial volume
 m = alsaaudio.Mixer('Master')
