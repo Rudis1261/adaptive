@@ -8,6 +8,7 @@
 ## To test it out, run it and shout at your microphone:
 
 import alsaaudio, time, audioop
+from subprocess import call
 
 # Open the device in nonblocking capture mode. The last argument could
 # just as well have been zero for blocking mode. Then we could have
@@ -39,6 +40,7 @@ outputVolumes = [100,  95,  90, 85, 80]
 m = alsaaudio.Mixer('Master')
 m.setvolume(volume)
 
+call(["notify-send", "Adaptive Volume Started"])
 while True:
     # Read data from device
     l,data = inp.read()
