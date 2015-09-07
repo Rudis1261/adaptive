@@ -29,12 +29,12 @@ inp.setformat(alsaaudio.PCM_FORMAT_S16_LE)
 # mode.
 inp.setperiodsize(160)
 
-volume = currentVolume = 80
+volume = currentVolume = 73
 volumeBuffer = []
-bufferSize = 200;
+bufferSize = 300;
 
-inputVolumes  = [180, 150, 80, 50, 40]
-outputVolumes = [100,  95,  90, 85, 80]
+inputVolumes  = [200, 180, 160, 140, 120, 100, 80, 60, 40]
+outputVolumes = [100, 97,  93,  90,  87,  83,  80, 77, currentVolume]
 
 # Set initial volume
 m = alsaaudio.Mixer('Master')
