@@ -37,8 +37,8 @@ measure = 20
 
 # Input volume specific (Mapping Input to Output)
 # This is based on the measure
-inputMin = 40
-inputMax = 300
+inputMin = 440 
+inputMax = 1000
 inputRate = ((inputMax - inputMin) / measure)
 inputVolumes = range(inputMin, inputMax, inputRate)
 inputVolumes = inputVolumes[::-1]
