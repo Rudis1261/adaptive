@@ -7,8 +7,44 @@
 ##
 ## To test it out, run it and shout at your microphone:
 
-import alsaaudio, time, audioop
+import alsaaudio, time, audioop, argparse
 from subprocess import call
+
+parser = argparse.ArgumentParser(description='Adaptive Volume Application. Normalize with input from a Microphone')
+parser.add_argument(
+    '--switch',
+    action='store_true',
+    help='Invert the action. Normalizing loud sounds Adapting down.'
+)
+
+parser.add_argument(
+    '--min',
+    type=int,
+    default=340,
+    help='Lower limit of the microphone eg: 340'
+)
+
+parser.add_argument(
+    '--max',
+    type=int,
+    default=3000,
+    help='Upper limit of the microphone eg: 3000'
+)
+
+parser.add_argument(
+    '--buffer',
+    type=int,
+    default=300,
+    help='Size of the buffer. The higher the number to smoother the transition. eg: 300'
+)
+
+# Get the arguments
+args = parser.parse_args()
+
+print args
+
+if args.switch:
+    print "Inverting action"
 
 # Open the device in nonblocking capture mode. The last argument could
 # just as well have been zero for blocking mode. Then we could have
@@ -32,20 +68,25 @@ inp.setperiodsize(160)
 # General Settings
 volume = currentVolume = 70
 volumeBuffer = []
-bufferSize = 300;
+bufferSize = args.buffer;
 measure = 20
 
 # Input volume specific (Mapping Input to Output)
 # This is based on the measure
-inputMin = 340 
-inputMax = 3000
+inputMin = args.min
+inputMax = args.max
 inputRate = ((inputMax - inputMin) / measure)
 inputVolumes = range(inputMin, inputMax, inputRate)
+
+# Switch the list
 inputVolumes = inputVolumes[::-1]
 
 # Output to vary 20% so the rate is a bit more set
 outputVolumes = range(80, 100, 1)
-outputVolumes = outputVolumes[::-1]
+
+# Switch the output mapping
+if args.switch == False:
+    outputVolumes = outputVolumes[::-1]
 
 # Set initial volume
 m = alsaaudio.Mixer('Master')
@@ -59,10 +100,12 @@ while True:
         # Return the maximum of the absolute value of all samples in a fragment.
         input = audioop.max(data, 2)
         volumeBuffer.append(input)
+
+        # Fill the buffer up
         if (len(volumeBuffer) >= bufferSize):
             averageVolume = (sum(volumeBuffer)/len(volumeBuffer))
             for i in range(len(inputVolumes)):
-                if averageVolume >= int(inputVolumes[i]):
+                if averageVolume >= int(inputVolumes[i]) :
                     volume = int(outputVolumes[i])
                     break
 
